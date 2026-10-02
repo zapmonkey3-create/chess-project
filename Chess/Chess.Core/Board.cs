@@ -35,5 +35,12 @@ namespace Chess.Core
         {
             return pieces[row, col];
         }
+
+        public void MovePiece(Move move)
+        {
+            Piece piece = GetPiece(move.From.Row, move.From.Col);
+            pieces[move.From.Row, move.From.Col] = null;
+            pieces[move.To.Row, move.To.Col] = piece;
+        }
     }
 }

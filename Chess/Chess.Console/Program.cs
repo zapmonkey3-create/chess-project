@@ -7,6 +7,16 @@ namespace Chess.Console
         static void Main(string[] args)
         {
             Board board = new Board();
+            System.Console.WriteLine("Move From:");
+            int[] coordinates = System.Console.ReadLine().Split(' ').Select(n => int.Parse(n)).ToArray();
+            Position from = new Position(coordinates[0], coordinates[1]);
+            System.Console.WriteLine("Move To:");
+            coordinates = System.Console.ReadLine().Split(' ').Select(n => int.Parse(n)).ToArray();
+            Position to = new Position(coordinates[0], coordinates[1]);
+
+            Move move = new Move(from, to);
+
+            board.MovePiece(move);
 
             for (int row = 0; row < 8; row++)
             {
