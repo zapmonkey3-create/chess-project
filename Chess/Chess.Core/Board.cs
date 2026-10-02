@@ -1,0 +1,39 @@
+﻿
+namespace Chess.Core
+{
+    public class Board
+    {
+        private Piece[,] pieces = new Piece[8, 8];
+        private void SetupBackRank(int row, PieceColor color)
+        {
+            pieces[row, 0] = new Piece(PieceType.Rook, color);
+            pieces[row, 1] = new Piece(PieceType.Knight, color);
+            pieces[row, 2] = new Piece(PieceType.Bishop, color);
+            pieces[row, 3] = new Piece(PieceType.Queen, color);
+            pieces[row, 4] = new Piece(PieceType.King, color);
+            pieces[row, 5] = new Piece(PieceType.Bishop, color);
+            pieces[row, 6] = new Piece(PieceType.Knight, color);
+            pieces[row, 7] = new Piece(PieceType.Rook, color);
+        }
+
+        private void SetupPawns(int row, PieceColor color)
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                pieces[row, i] = new Piece(PieceType.Pawn, color);
+            }
+        }
+        public Board()
+        {
+            SetupBackRank(0, PieceColor.Black);
+            SetupPawns(1, PieceColor.Black);
+            SetupPawns(6, PieceColor.White);
+            SetupBackRank(7, PieceColor.White);
+
+        }
+        public Piece GetPiece(int row, int col)
+        {
+            return pieces[row, col];
+        }
+    }
+}
