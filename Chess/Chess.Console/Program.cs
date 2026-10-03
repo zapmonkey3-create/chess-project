@@ -1,4 +1,5 @@
 ﻿using Chess.Core;
+using Chess.Core.Pieces;
 using System;
 namespace Chess.Console
 {
@@ -7,7 +8,7 @@ namespace Chess.Console
         static void Main(string[] args)
         {
             Board board = new Board();
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 99; i++)
             {
                 System.Console.WriteLine("Move From:");
                 int[] coordinates = System.Console.ReadLine().Split(' ').Select(n => int.Parse(n)).ToArray();
@@ -43,14 +44,14 @@ namespace Chess.Console
 
         static char GetPieceSymbol(Piece piece)
         {
-            char symbol = piece.Type switch
+            char symbol = piece switch
             {
-                PieceType.Rook => 'R',
-                PieceType.Knight => 'N',
-                PieceType.Bishop => 'B',
-                PieceType.Queen => 'Q',
-                PieceType.King => 'K',
-                PieceType.Pawn => 'P',
+                Rook => 'R',
+                Knight => 'N',
+                Bishop => 'B',
+                Queen => 'Q',
+                King => 'K',
+                Pawn => 'P',
             };
 
             if (piece.Color == PieceColor.Black)
