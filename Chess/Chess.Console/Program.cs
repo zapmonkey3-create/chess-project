@@ -7,34 +7,37 @@ namespace Chess.Console
         static void Main(string[] args)
         {
             Board board = new Board();
-            System.Console.WriteLine("Move From:");
-            int[] coordinates = System.Console.ReadLine().Split(' ').Select(n => int.Parse(n)).ToArray();
-            Position from = new Position(coordinates[0], coordinates[1]);
-            System.Console.WriteLine("Move To:");
-            coordinates = System.Console.ReadLine().Split(' ').Select(n => int.Parse(n)).ToArray();
-            Position to = new Position(coordinates[0], coordinates[1]);
-
-            Move move = new Move(from, to);
-
-            board.MovePiece(move);
-
-            for (int row = 0; row < 8; row++)
+            for (int i = 0; i < 4; i++)
             {
-                for (int col = 0; col < 8; col++)
+                System.Console.WriteLine("Move From:");
+                int[] coordinates = System.Console.ReadLine().Split(' ').Select(n => int.Parse(n)).ToArray();
+                Position from = new Position(coordinates[0], coordinates[1]);
+                System.Console.WriteLine("Move To:");
+                coordinates = System.Console.ReadLine().Split(' ').Select(n => int.Parse(n)).ToArray();
+                Position to = new Position(coordinates[0], coordinates[1]);
+
+                Move move = new Move(from, to);
+                System.Console.WriteLine($"Current turn: {board.currentTurn}");
+                board.MovePiece(move);
+                for (int row = 0; row < 8; row++)
                 {
-                    Piece piece = board.GetPiece(row, col);
+                    for (int col = 0; col < 8; col++)
+                    {
+                        Piece piece = board.GetPiece(row, col);
 
-                    if (piece == null)
-                    {
-                        System.Console.Write(".");
+                        if (piece == null)
+                        {
+                            System.Console.Write(".");
+                        }
+                        else
+                        {
+                            System.Console.Write(GetPieceSymbol(piece));
+                        }
                     }
-                    else
-                    {
-                        System.Console.Write(GetPieceSymbol(piece));
-                    }
+
+                    System.Console.WriteLine();
                 }
-
-                System.Console.WriteLine();
+                System.Console.WriteLine($"Current turn: {board.currentTurn}");
             }
         }
 
@@ -56,6 +59,7 @@ namespace Chess.Console
             }
 
             return symbol;
+
         }
     }
 }

@@ -4,6 +4,7 @@ namespace Chess.Core
     public class Board
     {
         private Piece[,] pieces = new Piece[8, 8];
+        public PieceColor currentTurn { get; private set; } = PieceColor.White;
         private void SetupBackRank(int row, PieceColor color)
         {
             pieces[row, 0] = new Piece(PieceType.Rook, color);
@@ -35,12 +36,59 @@ namespace Chess.Core
         {
             return pieces[row, col];
         }
+        private Piece GetCapturedPiece(Position position)
+        {
+            Piece piece = GetPiece(position.Row, position.Col);
+            if (piece != null)
+            {
+                if (piece.Color != currentTurn)
+                {
+                    return piece;
+                }
+              
+            }
 
+           piece = null;
+           return piece;
+    
+        }
+        private void SwitchTurn()
+        {
+            if (currentTurn == PieceColor.White)
+            {
+                currentTurn = PieceColor.Black;
+            }
+            else
+            {
+                currentTurn = PieceColor.White;
+            }
+        }
         public void MovePiece(Move move)
         {
             Piece piece = GetPiece(move.From.Row, move.From.Col);
-            pieces[move.From.Row, move.From.Col] = null;
-            pieces[move.To.Row, move.To.Col] = piece;
+            
+            if (piece == null)
+            {
+                Console.WriteLine("Please move an existing piece");
+            }
+            else
+            {
+                if (piece.Color == currentTurn)
+                {
+                    Piece capturedPiece = GetCapturedPiece(move.To);
+                    if (capturedPiece != null)
+                    {
+                        Console.WriteLine($"Captured piece: {capturedPiece.Color} {capturedPiece.Type}");
+                    }
+                    pieces[move.From.Row, move.From.Col] = null;
+                    pieces[move.To.Row, move.To.Col] = piece;
+                    SwitchTurn();
+                }
+                else
+                {
+                    Console.WriteLine("It's the opponent's turn!");
+                }
+            }      
         }
     }
 }
