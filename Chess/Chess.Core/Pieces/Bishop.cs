@@ -11,5 +11,9 @@ namespace Chess.Core.Pieces
         public Bishop(PieceColor color): base(color)
         {
         }
+        public override bool CanMove(Position from, Position to, Board board)
+        {
+            return true;
+        }
     }
 }

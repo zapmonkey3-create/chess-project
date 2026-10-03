@@ -12,5 +12,9 @@ namespace Chess.Core.Pieces
         {
 
         }
+        public override bool CanMove(Position from, Position to, Board board)
+        {
+            return true;
+        }
     }
 }

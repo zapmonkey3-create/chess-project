@@ -1,6 +1,4 @@
-﻿
-
-namespace Chess.Core
+﻿namespace Chess.Core
 {
     public enum PieceColor
     {

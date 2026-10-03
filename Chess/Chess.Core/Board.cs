@@ -78,13 +78,22 @@ namespace Chess.Core
                 if (piece.Color == currentTurn)
                 {
                     Piece capturedPiece = GetCapturedPiece(move.To);
-                    if (capturedPiece != null)
+                   
+                    if (piece.CanMove(move.From, move.To, this))
                     {
-                        Console.WriteLine($"Captured piece: {capturedPiece.Color} {capturedPiece.GetType().Name}");
+                        if (capturedPiece != null)
+                        {
+                            Console.WriteLine($"Captured piece: {capturedPiece.Color} {capturedPiece.GetType().Name}");
+                        }
+                        pieces[move.From.Row, move.From.Col] = null;
+                        pieces[move.To.Row, move.To.Col] = piece;
+                        SwitchTurn();
                     }
-                    pieces[move.From.Row, move.From.Col] = null;
-                    pieces[move.To.Row, move.To.Col] = piece;
-                    SwitchTurn();
+                    else
+                    {
+                        Console.WriteLine("Please make a legal move!");
+                    }
+                    
                 }
                 else
                 {

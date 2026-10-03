@@ -1,6 +1,6 @@
 ﻿namespace Chess.Core.Pieces
 {
-    public class Piece
+    public abstract class Piece
     {
         
         public PieceColor Color { get; private set; }
@@ -9,5 +9,7 @@
         {
             Color = color;
         }
+
+        public abstract bool CanMove(Position from, Position to, Board board);
     }
 }
