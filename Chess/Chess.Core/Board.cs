@@ -97,7 +97,7 @@ namespace Chess.Core
                 }
                 else
                 {
-                    Console.WriteLine("It's the opponent's turn!");
+                    Console.WriteLine("Move your own piece!");
                 }
             }      
         }

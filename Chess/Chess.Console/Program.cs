@@ -8,6 +8,24 @@ namespace Chess.Console
         static void Main(string[] args)
         {
             Board board = new Board();
+            for (int row = 0; row < 8; row++)
+            {
+                for (int col = 0; col < 8; col++)
+                {
+                    Piece piece = board.GetPiece(row, col);
+
+                    if (piece == null)
+                    {
+                        System.Console.Write(".");
+                    }
+                    else
+                    {
+                        System.Console.Write(GetPieceSymbol(piece));
+                    }
+                }
+
+                System.Console.WriteLine();
+            }
             for (int i = 0; i < 99; i++)
             {
                 System.Console.WriteLine("Move From:");
