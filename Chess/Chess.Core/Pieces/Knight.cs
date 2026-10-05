@@ -18,14 +18,6 @@ namespace Chess.Core.Pieces
             int colDifference = Math.Abs(from.Col - to.Col);
             if (rowDifference == 2 && colDifference == 1 || rowDifference == 1 && colDifference == 2)
             {
-                Piece piece = board.GetPiece(to.Row, to.Col);
-                if (piece != null)
-                {
-                    if (piece.Color == board.currentTurn)
-                    {
-                        return false;
-                    }
-                }
                 return true;
             }
             return false;

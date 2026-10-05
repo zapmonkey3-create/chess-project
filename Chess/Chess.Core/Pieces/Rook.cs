@@ -29,16 +29,9 @@ namespace Chess.Core.Pieces
                         return false;
                     }
                 }
-                Piece piece = board.GetPiece(to.Row, to.Col);
-                if (piece != null)
-                {
-                    if (piece.Color == board.currentTurn)
-                    {
-                        return false;
-                    }
-                }
                 return true;
             }
+
             //horizontal
             else if (from.Row == to.Row)
             {
@@ -51,17 +44,8 @@ namespace Chess.Core.Pieces
                         return false;
                     }
                 }
-                Piece piece = board.GetPiece(to.Row, to.Col);
-                if (piece != null)
-                {
-                    if (piece.Color == board.currentTurn)
-                    {
-                        return false;
-                    }
-                }
                 return true;  
-            }
-           
+            } 
             return false;
         }
     }
