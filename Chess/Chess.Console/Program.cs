@@ -38,6 +38,9 @@ namespace Chess.Console
                 Move move = new Move(from, to);
                 System.Console.WriteLine($"Current turn: {board.currentTurn}");
                 board.MovePiece(move);
+                Position king = board.FindKing(board.currentTurn);
+                System.Console.WriteLine($"King at: Row {king.Row}, Col {king.Col}");
+                System.Console.WriteLine($"King in check: {board.IsInCheck(board.currentTurn)}");
                 for (int row = 0; row < 8; row++)
                 {
                     for (int col = 0; col < 8; col++)

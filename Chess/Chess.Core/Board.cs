@@ -1,5 +1,6 @@
 ﻿
 using Chess.Core.Pieces;
+using System.Runtime.CompilerServices;
 
 namespace Chess.Core
 {
@@ -78,9 +79,10 @@ namespace Chess.Core
                 if (piece.Color == currentTurn)
                 {
                     Piece capturedPiece = GetCapturedPiece(move.To);
-                    if (capturedPiece != null)
+                    Piece target = GetPiece(move.To.Row, move.To.Col);
+                    if (target != null)
                     {
-                        if (capturedPiece.Color == currentTurn)
+                        if (target.Color == currentTurn)
                         {
                             Console.WriteLine("You can't capture your own piece!");
                             return;
@@ -109,6 +111,43 @@ namespace Chess.Core
                     Console.WriteLine("Move your own piece!");              
                 }
             }      
+        }
+        public Position FindKing(PieceColor color)
+        {
+           
+            for (int row = 0; row < 8; row++)
+            {
+                for (int col = 0; col < 8; col++)
+                {
+                    Piece piece = GetPiece(row, col);
+                    if (piece != null && piece is King && piece.Color == color)
+                    {
+                        Position position = new Position(row, col);
+                        return position;
+                    }
+                }
+            }
+            throw new InvalidOperationException("There is no king!");
+        }
+        public bool IsInCheck(PieceColor color)
+        {
+            Position kingPosition = FindKing(color);
+            for (int row = 0; row < 8; row++)
+            {
+                for (int col = 0; col < 8; col++)
+                {
+                    Piece piece = GetPiece(row, col);
+                    Position from = new Position(row, col);
+                    if (piece != null && color != piece.Color)
+                    {
+                        if (piece.CanMove(from, kingPosition, this))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
         }
     }
 }
