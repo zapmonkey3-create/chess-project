@@ -97,6 +97,14 @@ namespace Chess.Core
                         }
                         pieces[move.From.Row, move.From.Col] = null;
                         pieces[move.To.Row, move.To.Col] = piece;
+                        if (IsInCheck(piece.Color))
+                        {
+                            pieces[move.From.Row, move.From.Col] = piece;
+                            pieces[move.To.Row, move.To.Col] = capturedPiece;
+
+                            Console.WriteLine("You are in check!"); ;
+                            return;
+                        }
                         SwitchTurn();
                     }
                     else
