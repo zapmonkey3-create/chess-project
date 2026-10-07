@@ -19,6 +19,7 @@ namespace Chess.Core.Pieces
             int colDifference = Math.Abs(from.Col - to.Col);
             int rowStep = to.Row > from.Row ? 1 : -1;
             int colStep = to.Col > from.Col ? 1 : -1;
+
             //diagonal
             if (rowDifference == colDifference)
             {
@@ -32,6 +33,7 @@ namespace Chess.Core.Pieces
                     }
                 }
             }
+
             //vertical
             else if (from.Col == to.Col)
             {
@@ -44,6 +46,7 @@ namespace Chess.Core.Pieces
                     }
                 }
             }
+
             //horizontal
             else if (from.Row == to.Row)
             {

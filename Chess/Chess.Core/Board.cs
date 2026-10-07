@@ -66,59 +66,67 @@ namespace Chess.Core
                 currentTurn = PieceColor.White;
             }
         }
-        public void MovePiece(Move move)
+
+        public bool IsLegalMove(Move move)
         {
             Piece piece = GetPiece(move.From.Row, move.From.Col);
-            
+            Piece capturedPiece = GetPiece(move.To.Row, move.To.Col);
+            //does a piece exist
             if (piece == null)
             {
                 Console.WriteLine("Please move an existing piece");
+                return false;
             }
-            else
+
+            //is the piece ours
+            if (piece.Color != currentTurn)
             {
-                if (piece.Color == currentTurn)
-                {
-                    Piece capturedPiece = GetCapturedPiece(move.To);
-                    Piece target = GetPiece(move.To.Row, move.To.Col);
-                    if (target != null)
-                    {
-                        if (target.Color == currentTurn)
-                        {
-                            Console.WriteLine("You can't capture your own piece!");
-                            return;
-                        }
-                    }
-                    if (piece.CanMove(move.From, move.To, this))
-                    {
-                        if (capturedPiece != null)
-                        {
-                            Console.WriteLine($"Captured piece: {capturedPiece.Color} {capturedPiece.GetType().Name}");
-                            
-                        }
-                        pieces[move.From.Row, move.From.Col] = null;
-                        pieces[move.To.Row, move.To.Col] = piece;
-                        if (IsInCheck(piece.Color))
-                        {
-                            pieces[move.From.Row, move.From.Col] = piece;
-                            pieces[move.To.Row, move.To.Col] = capturedPiece;
+                Console.WriteLine("Move your own piece!");
+                return false;
+            }
 
-                            Console.WriteLine("You are in check!"); ;
-                            return;
-                        }
-                        SwitchTurn();
-                    }
-                    else
-                    {
-                        Console.WriteLine("Please make a legal move!");
-                    }
-                    
-                } 
+            //friendly fire prevention
+            if (capturedPiece != null && capturedPiece.Color == currentTurn)
+            {
+                Console.WriteLine("You can't capture your own piece!");
+                return false;
+            }
 
-                else
-                {
-                    Console.WriteLine("Move your own piece!");              
-                }
-            }      
+            //can the piece move there
+            if (!piece.CanMove(move.From, move.To, this))
+            {
+                Console.WriteLine("Please make a legal move!");
+                return false;
+            }
+
+            //temporary move
+            pieces[move.From.Row, move.From.Col] = null;
+            pieces[move.To.Row, move.To.Col] = piece;
+
+            //check validity
+            bool leavesKingInCheck = IsInCheck(piece.Color);
+
+            //undo temporary move
+            pieces[move.From.Row, move.From.Col] = piece;
+            pieces[move.To.Row, move.To.Col] = capturedPiece;
+
+            if(leavesKingInCheck)
+            {
+                Console.WriteLine("That move would leave your king in check!");
+                return false;
+            }
+
+            return true;
+        }
+        public void MovePiece(Move move)
+        {
+            if (IsLegalMove(move))
+            {
+                Piece piece = GetPiece(move.From.Row, move.From.Col);
+                pieces[move.From.Row, move.From.Col] = null;
+                pieces[move.To.Row, move.To.Col] = piece;
+                SwitchTurn();
+            }    
         }
         public Position FindKing(PieceColor color)
         {
@@ -157,5 +165,12 @@ namespace Chess.Core
             }
             return false;
         }
+
+        public bool IsCheckmate(PieceColor color)
+        {
+            
+            return false;
+        }
+
     }
 }
