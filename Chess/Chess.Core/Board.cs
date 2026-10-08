@@ -67,35 +67,47 @@ namespace Chess.Core
             }
         }
 
-        public bool IsLegalMove(Move move)
+        public bool IsLegalMove(Move move, bool showMessage)
         {
             Piece piece = GetPiece(move.From.Row, move.From.Col);
             Piece capturedPiece = GetPiece(move.To.Row, move.To.Col);
             //does a piece exist
             if (piece == null)
             {
-                Console.WriteLine("Please move an existing piece");
+                if (showMessage == true)
+                {
+                    Console.WriteLine("Please move an existing piece");
+                }
                 return false;
             }
 
             //is the piece ours
             if (piece.Color != currentTurn)
             {
-                Console.WriteLine("Move your own piece!");
+                if (showMessage == true)
+                {
+                    Console.WriteLine("Move your own piece!");
+                }
                 return false;
             }
 
             //friendly fire prevention
             if (capturedPiece != null && capturedPiece.Color == currentTurn)
             {
-                Console.WriteLine("You can't capture your own piece!");
+                if (showMessage == true)
+                {
+                    Console.WriteLine("You can't capture your own piece!");
+                }
                 return false;
             }
 
             //can the piece move there
             if (!piece.CanMove(move.From, move.To, this))
             {
-                Console.WriteLine("Please make a legal move!");
+                if (showMessage == true)
+                {
+                    Console.WriteLine("Please make a legal move!");
+                }
                 return false;
             }
 
@@ -112,7 +124,10 @@ namespace Chess.Core
 
             if(leavesKingInCheck)
             {
-                Console.WriteLine("That move would leave your king in check!");
+                if (showMessage == true)
+                {
+                    Console.WriteLine("That move would leave your king in check!");
+                }
                 return false;
             }
 
@@ -120,7 +135,7 @@ namespace Chess.Core
         }
         public void MovePiece(Move move)
         {
-            if (IsLegalMove(move))
+            if (IsLegalMove(move, false))
             {
                 Piece piece = GetPiece(move.From.Row, move.From.Col);
                 pieces[move.From.Row, move.From.Col] = null;
@@ -169,8 +184,34 @@ namespace Chess.Core
         public bool IsCheckmate(PieceColor color)
         {
             
-            return false;
-        }
+            if (!IsInCheck(color))
+            {
+                return false;
+            }
 
+            //check if there is a legal move, if yes == no checkmate
+            for (int row = 0; row < 8; row++)
+            {
+                for (int col = 0; col < 8; col++)
+                {
+                    Piece piece = GetPiece(row, col);
+                    if (piece != null && piece.Color == color)
+                    {
+                        for (int destinationRow = 0; destinationRow < 8; destinationRow++)
+                        {
+                            for (int destinationCol = 0; destinationCol < 8; destinationCol++)
+                            {
+                                Move move = new Move(new Position(row, col), new Position(destinationRow, destinationCol));
+                                if (IsLegalMove(move, false))
+                                {
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return true;
+        }
     }
 }

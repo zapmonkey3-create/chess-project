@@ -41,6 +41,7 @@ namespace Chess.Console
                 Position king = board.FindKing(board.currentTurn);
                 System.Console.WriteLine($"King at: Row {king.Row}, Col {king.Col}");
                 System.Console.WriteLine($"King in check: {board.IsInCheck(board.currentTurn)}");
+                
                 for (int row = 0; row < 8; row++)
                 {
                     for (int col = 0; col < 8; col++)
@@ -58,6 +59,11 @@ namespace Chess.Console
                     }
 
                     System.Console.WriteLine();
+                }
+                if (board.IsCheckmate(board.currentTurn))
+                {
+                    System.Console.WriteLine("Checkmate!");
+                    return;
                 }
                 System.Console.WriteLine($"Current turn: {board.currentTurn}");
             }
