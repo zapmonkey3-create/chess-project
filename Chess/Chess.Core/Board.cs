@@ -211,6 +211,39 @@ namespace Chess.Core
                     }
                 }
             }
+
+            return true;
+        }
+
+        public bool IsStalemate(PieceColor color)
+        {
+            if (IsInCheck(color))
+            {
+                return false;
+            }
+
+            for (int row = 0; row < 8; row++)
+            {
+                for (int col = 0; col < 8; col++)
+                {
+                    Piece piece = GetPiece(row, col);
+                    if (piece != null && piece.Color == color)
+                    {
+                        for (int destinationRow = 0; destinationRow < 8; destinationRow++)
+                        {
+                            for (int destinationCol = 0; destinationCol < 8; destinationCol++)
+                            {
+                                Move move = new Move(new Position(row, col), new Position(destinationRow, destinationCol));
+                                if (IsLegalMove(move, false))
+                                {
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             return true;
         }
     }

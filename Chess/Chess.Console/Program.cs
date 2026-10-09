@@ -36,11 +36,12 @@ namespace Chess.Console
                 Position to = new Position(coordinates[0], coordinates[1]);
 
                 Move move = new Move(from, to);
-                System.Console.WriteLine($"Current turn: {board.currentTurn}");
+                
                 board.MovePiece(move);
                 Position king = board.FindKing(board.currentTurn);
                 System.Console.WriteLine($"King at: Row {king.Row}, Col {king.Col}");
                 System.Console.WriteLine($"King in check: {board.IsInCheck(board.currentTurn)}");
+
                 
                 for (int row = 0; row < 8; row++)
                 {
@@ -63,6 +64,12 @@ namespace Chess.Console
                 if (board.IsCheckmate(board.currentTurn))
                 {
                     System.Console.WriteLine("Checkmate!");
+                    return;
+                }
+                
+                if (board.IsStalemate(board.currentTurn))
+                {
+                    System.Console.WriteLine("Stalemate!");
                     return;
                 }
                 System.Console.WriteLine($"Current turn: {board.currentTurn}");
