@@ -8,24 +8,8 @@ namespace Chess.Console
         static void Main(string[] args)
         {
             Board board = new Board();
-            for (int row = 0; row < 8; row++)
-            {
-                for (int col = 0; col < 8; col++)
-                {
-                    Piece piece = board.GetPiece(row, col);
+            DrawBoard(board);
 
-                    if (piece == null)
-                    {
-                        System.Console.Write(".");
-                    }
-                    else
-                    {
-                        System.Console.Write(GetPieceSymbol(piece));
-                    }
-                }
-
-                System.Console.WriteLine();
-            }
             for (int i = 0; i < 99; i++)
             {
                 System.Console.WriteLine("Move From:");
@@ -42,25 +26,8 @@ namespace Chess.Console
                 System.Console.WriteLine($"King at: Row {king.Row}, Col {king.Col}");
                 System.Console.WriteLine($"King in check: {board.IsInCheck(board.currentTurn)}");
 
-                
-                for (int row = 0; row < 8; row++)
-                {
-                    for (int col = 0; col < 8; col++)
-                    {
-                        Piece piece = board.GetPiece(row, col);
+                DrawBoard(board);
 
-                        if (piece == null)
-                        {
-                            System.Console.Write(".");
-                        }
-                        else
-                        {
-                            System.Console.Write(GetPieceSymbol(piece));
-                        }
-                    }
-
-                    System.Console.WriteLine();
-                }
                 if (board.IsCheckmate(board.currentTurn))
                 {
                     System.Console.WriteLine("Checkmate!");
@@ -73,6 +40,41 @@ namespace Chess.Console
                     return;
                 }
                 System.Console.WriteLine($"Current turn: {board.currentTurn}");
+            }
+        }
+
+        static void DrawBoard(Board board)
+        {
+            ConsoleColor originalForeground = System.Console.ForegroundColor;
+            ConsoleColor originalBackground = System.Console.BackgroundColor;
+
+            try
+            {
+                System.Console.WriteLine("    a  b  c  d  e  f  g  h");
+                for (int row = 0; row < 8; row++)
+                {
+                    System.Console.Write($"{8 - row} ");
+                    for (int col = 0; col < 8; col++)
+                    {
+                        Piece piece = board.GetPiece(row, col);
+                        System.Console.BackgroundColor = (row + col) % 2 == 0
+                            ? ConsoleColor.DarkGreen
+                            : ConsoleColor.DarkGray;
+                        System.Console.ForegroundColor = piece?.Color == PieceColor.Black
+                            ? ConsoleColor.Yellow
+                            : ConsoleColor.White;
+                        System.Console.Write($" {(piece == null ? ' ' : GetPieceSymbol(piece))} ");
+                        System.Console.ResetColor();
+                    }
+
+                    System.Console.WriteLine($" {8 - row}");
+                }
+                System.Console.WriteLine("    a  b  c  d  e  f  g  h");
+            }
+            finally
+            {
+                System.Console.ForegroundColor = originalForeground;
+                System.Console.BackgroundColor = originalBackground;
             }
         }
 
