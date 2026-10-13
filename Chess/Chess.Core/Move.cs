@@ -8,11 +8,12 @@ namespace Chess.Core
     {
         public Position From { get; private set; }
         public Position To { get; private set; }
-
-        public Move(Position from, Position to)
+        public PromotionPiece? Promotion { get; private set; }
+        public Move(Position from, Position to, PromotionPiece? promotion = null)
         {
             From = from;
             To = to;
+            Promotion = promotion;
         }
     }
 }

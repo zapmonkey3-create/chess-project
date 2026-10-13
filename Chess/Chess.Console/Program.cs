@@ -1,9 +1,10 @@
 ﻿using Chess.Core;
 using Chess.Core.Pieces;
 using System;
+using System.Linq;
 namespace Chess.Console
 {
-    internal class Program
+   internal class Program
     {
         static void Main(string[] args)
         {
@@ -50,10 +51,10 @@ namespace Chess.Console
 
             try
             {
-                System.Console.WriteLine("    a  b  c  d  e  f  g  h");
+                System.Console.WriteLine("    0  1  2  3  4  5  6  7");
                 for (int row = 0; row < 8; row++)
                 {
-                    System.Console.Write($"{8 - row} ");
+                    System.Console.Write($" {0 + row} ");
                     for (int col = 0; col < 8; col++)
                     {
                         Piece piece = board.GetPiece(row, col);
@@ -67,9 +68,9 @@ namespace Chess.Console
                         System.Console.ResetColor();
                     }
 
-                    System.Console.WriteLine($" {8 - row}");
+                    System.Console.WriteLine($" {0 + row} ");
                 }
-                System.Console.WriteLine("    a  b  c  d  e  f  g  h");
+                System.Console.WriteLine("    0  1  2  3  4  5  6  7");
             }
             finally
             {
@@ -77,7 +78,7 @@ namespace Chess.Console
                 System.Console.BackgroundColor = originalBackground;
             }
         }
-
+           
         static char GetPieceSymbol(Piece piece)
         {
             char symbol = piece switch
@@ -96,7 +97,6 @@ namespace Chess.Console
             }
 
             return symbol;
-
         }
     }
 }

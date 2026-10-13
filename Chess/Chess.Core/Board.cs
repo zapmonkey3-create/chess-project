@@ -78,11 +78,21 @@ namespace Chess.Core
             }
         }
 
-        public bool IsLegalMove(Move move, bool showMessage)
+        public bool IsLegalMove(Move? move, bool showMessage)
         {
+
             Piece piece = GetPiece(move.From.Row, move.From.Col);
             Piece capturedPiece = GetPiece(move.To.Row, move.To.Col);
-
+            
+            if(capturedPiece is King)
+            {
+                if(showMessage)
+                {
+                    Console.WriteLine("You cannot capture a king.");
+                }
+                
+                return false;
+            }
             //does a piece exist
             if (piece == null)
             {
@@ -102,7 +112,7 @@ namespace Chess.Core
                 }
                 return false;
             }
-
+    
             //friendly fire prevention
             if (capturedPiece != null && capturedPiece.Color == currentTurn)
             {
@@ -122,7 +132,18 @@ namespace Chess.Core
                 }
                 return false;
             }
-
+            
+              
+            bool reachesLastRank = piece is Pawn && (piece.Color == PieceColor.White ? move.To.Row == 0 : move.To.Row == 7);
+            if(reachesLastRank != move.Promotion.HasValue)
+            {
+                if(showMessage)
+                {
+                    Console.WriteLine("Choose a promotion piece only when a pawn reaches the last rank!");
+                }
+                return false;
+            }
+            
             //temporary move
             pieces[move.From.Row, move.From.Col] = null;
             pieces[move.To.Row, move.To.Col] = piece;
@@ -142,29 +163,35 @@ namespace Chess.Core
                 }
                 return false;
             }
-
+            
+            //castling through check
             if(piece is King && Math.Abs(move.From.Col - move.To.Col) == 2)
             {
         
                Position crossingPosition = new Position(move.From.Row,(move.From.Col + move.To.Col) / 2);
                pieces[move.From.Row, move.From.Col] = null;
                pieces[crossingPosition.Row, crossingPosition.Col] = piece;
+
                bool crossesCheck = IsInCheck(piece.Color);
 
               pieces[move.From.Row, move.From.Col] = piece;
               pieces[crossingPosition.Row, crossingPosition.Col] = null; 
+                if(IsInCheck(currentTurn))
+                {
+                    return false;
+                }
 
                 if(crossesCheck)
                 {
                     return false;
                 }
             }
-
+          
             return true;
         }
         public void MovePiece(Move move)
         {
-            if (IsLegalMove(move, false))
+            if (IsLegalMove(move, true))
             {
                 Piece piece = GetPiece(move.From.Row, move.From.Col);
                 pieces[move.From.Row, move.From.Col] = null;
@@ -203,6 +230,18 @@ namespace Chess.Core
                            pieces[0, 5] = rook;
                         }
                     }
+                }
+
+                if(piece is Pawn && move.Promotion.HasValue)
+                {
+                    pieces[move.To.Row, move.To.Col] = move.Promotion.Value switch
+                    {
+                        PromotionPiece.Queen => new Queen(piece.Color),
+                        PromotionPiece.Rook => new Rook(piece.Color),
+                        PromotionPiece.Bishop => new Bishop(piece.Color),
+                        PromotionPiece.Knight => new Knight(piece.Color),
+                        _ => throw new ArgumentOutOfRangeException(nameof(move.Promotion))
+                    };
                 }
 
                 if (piece is King)
