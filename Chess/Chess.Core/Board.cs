@@ -13,12 +13,13 @@ namespace Chess.Core
         private bool whiteCanCastleQueenside = true;
         private bool blackCanCastleKingside = true;
         private bool blackCanCastleQueenside = true;
-
+        private Position? enPassantTarget;
         public bool WhiteCanCastleKingside => whiteCanCastleKingside;
         public bool WhiteCanCastleQueenside => whiteCanCastleQueenside;
         public bool BlackCanCastleKingside => blackCanCastleKingside;
         public bool BlackCanCastleQueenside => blackCanCastleQueenside;
 
+        public Position? EnPassantTarget => enPassantTarget;
         private void SetupBackRank(int row, PieceColor color)
         {
             pieces[row, 0] = new Rook(color);
@@ -197,6 +198,12 @@ namespace Chess.Core
                 pieces[move.From.Row, move.From.Col] = null;
                 pieces[move.To.Row, move.To.Col] = piece;
                 int colDifference = Math.Abs(move.From.Col - move.To.Col);
+                //en passant
+                if (piece is Pawn && Math.Abs(move.From.Row - move.To.Row) == 2)
+                {
+                }
+
+                //castling
                 if (piece is King && colDifference == 2)
                 {
                     if(move.From.Row == 7 && move.From.Col == 4)
@@ -231,7 +238,8 @@ namespace Chess.Core
                         }
                     }
                 }
-
+                
+                //promotion
                 if(piece is Pawn && move.Promotion.HasValue)
                 {
                     pieces[move.To.Row, move.To.Col] = move.Promotion.Value switch
@@ -244,6 +252,7 @@ namespace Chess.Core
                     };
                 }
 
+                //castling "validation"
                 if (piece is King)
                 {
                     if (piece.Color == PieceColor.White)
@@ -374,6 +383,7 @@ namespace Chess.Core
                                 Move move = new Move(new Position(row, col), new Position(destinationRow, destinationCol));
                                 if (IsLegalMove(move, false))
                                 {
+                                    
                                     return false;
                                 }
                             }

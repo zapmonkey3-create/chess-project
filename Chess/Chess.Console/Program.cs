@@ -20,9 +20,35 @@ namespace Chess.Console
                 coordinates = System.Console.ReadLine().Split(' ').Select(n => int.Parse(n)).ToArray();
                 Position to = new Position(coordinates[0], coordinates[1]);
 
-                Move move = new Move(from, to);
                 
+
+                Piece piece = board.GetPiece(from.Row, from.Col);
+                PromotionPiece? promotion = null;
+
+                bool needsPromotion = piece is Pawn && (piece.Color == PieceColor.White && to.Row == 0 || piece.Color == PieceColor.Black && to.Row == 7);
+                if(needsPromotion)
+                {
+                    PromotionPiece? pieceChoice = null;
+                do
+                {
+                    System.Console.WriteLine("What would you like to promote to? (Q/R/B/N) ");
+                    string choice = System.Console.ReadLine().Trim().ToUpper();
+                     pieceChoice = choice switch
+                     {
+                      "R" => PromotionPiece.Rook,
+                      "N" => PromotionPiece.Knight,
+                      "B" => PromotionPiece.Bishop,
+                      "Q" => PromotionPiece.Queen,
+                      _ => null,
+                    };
+                    promotion = pieceChoice;    
+                }  
+                while(pieceChoice == null);
+                }
+                
+                Move move = new Move(from, to, promotion);
                 board.MovePiece(move);
+               
                 Position king = board.FindKing(board.currentTurn);
                 System.Console.WriteLine($"King at: Row {king.Row}, Col {king.Col}");
                 System.Console.WriteLine($"King in check: {board.IsInCheck(board.currentTurn)}");
@@ -48,7 +74,6 @@ namespace Chess.Console
         {
             ConsoleColor originalForeground = System.Console.ForegroundColor;
             ConsoleColor originalBackground = System.Console.BackgroundColor;
-
             try
             {
                 System.Console.WriteLine("    0  1  2  3  4  5  6  7");
@@ -78,7 +103,8 @@ namespace Chess.Console
                 System.Console.BackgroundColor = originalBackground;
             }
         }
-           
+
+
         static char GetPieceSymbol(Piece piece)
         {
             char symbol = piece switch
