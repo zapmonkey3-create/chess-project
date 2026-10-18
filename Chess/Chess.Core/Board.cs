@@ -18,7 +18,6 @@ namespace Chess.Core
         public bool WhiteCanCastleQueenside => whiteCanCastleQueenside;
         public bool BlackCanCastleKingside => blackCanCastleKingside;
         public bool BlackCanCastleQueenside => blackCanCastleQueenside;
-
         public Position? EnPassantTarget => enPassantTarget;
         private void SetupBackRank(int row, PieceColor color)
         {
@@ -123,7 +122,16 @@ namespace Chess.Core
                 }
                 return false;
             }
+            //en passant validity
+            int direction = piece.Color == PieceColor.White ? -1 : 1;
 
+            Piece adjacentPiece = GetPiece(move.From.Row, move.To.Col);
+
+          if (enPassantTarget != null && piece is Pawn && move.To.Row == enPassantTarget.Row && move.To.Col == enPassantTarget.Col && Math.Abs(enPassantTarget.Col - move.From.Col) == 1 &&
+             enPassantTarget.Row == move.From.Row + direction && GetPiece(enPassantTarget.Row, enPassantTarget.Col) == null && adjacentPiece is Pawn && adjacentPiece.Color != piece.Color)
+          {
+            return true;
+          }
             //can the piece move there
             if (!piece.CanMove(move.From, move.To, this))
             {
@@ -134,7 +142,7 @@ namespace Chess.Core
                 return false;
             }
             
-              
+            //promotion validity  
             bool reachesLastRank = piece is Pawn && (piece.Color == PieceColor.White ? move.To.Row == 0 : move.To.Row == 7);
             if(reachesLastRank != move.Promotion.HasValue)
             {
@@ -156,6 +164,7 @@ namespace Chess.Core
             pieces[move.From.Row, move.From.Col] = piece;
             pieces[move.To.Row, move.To.Col] = capturedPiece;
             
+            //check validity
             if(leavesKingInCheck)
             {
                 if (showMessage == true)
@@ -198,11 +207,7 @@ namespace Chess.Core
                 pieces[move.From.Row, move.From.Col] = null;
                 pieces[move.To.Row, move.To.Col] = piece;
                 int colDifference = Math.Abs(move.From.Col - move.To.Col);
-                //en passant
-                if (piece is Pawn && Math.Abs(move.From.Row - move.To.Row) == 2)
-                {
-                }
-
+                
                 //castling
                 if (piece is King && colDifference == 2)
                 {
@@ -222,7 +227,7 @@ namespace Chess.Core
                         }
                     }
                     
-                    if(move.From.Row == 0 && move.From.Col == 4)
+                    if (move.From.Row == 0 && move.From.Col == 4)
                     {
                         if (move.From.Col > move.To.Col)
                         {
@@ -238,9 +243,9 @@ namespace Chess.Core
                         }
                     }
                 }
-                
+
                 //promotion
-                if(piece is Pawn && move.Promotion.HasValue)
+                if (piece is Pawn && move.Promotion.HasValue)
                 {
                     pieces[move.To.Row, move.To.Col] = move.Promotion.Value switch
                     {
@@ -287,6 +292,24 @@ namespace Chess.Core
                     whiteCanCastleKingside = false;
                 }
 
+                //en passant
+                if(enPassantTarget != null)
+                {
+                 if(move.To.Row == enPassantTarget.Row && move.To.Col == enPassantTarget.Col)
+                  {
+                    pieces[move.From.Row, move.To.Col] = null;
+                  }
+
+                    enPassantTarget = null;
+                }
+               
+
+                if (piece is Pawn && Math.Abs(move.From.Row - move.To.Row) == 2)
+                {
+                int targetRow = (move.From.Row + move.To.Row) / 2;
+                enPassantTarget = new Position(targetRow, move.From.Col);
+                }
+                
                 SwitchTurn();
             }    
         }
@@ -358,7 +381,7 @@ namespace Chess.Core
                     }
                 }
             }
-
+             
             return true;
         }
 
