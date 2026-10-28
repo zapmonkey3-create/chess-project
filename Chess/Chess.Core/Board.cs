@@ -39,12 +39,20 @@ namespace Chess.Core
             }
         }
         public Board()
+
         {
             SetupBackRank(0, PieceColor.Black);
             SetupPawns(1, PieceColor.Black);
             SetupPawns(6, PieceColor.White);
             SetupBackRank(7, PieceColor.White);
 
+        }
+
+        public Board(Piece[,] Pieces, PieceColor pieceColor)
+
+        {
+            pieces = Pieces;
+            currentTurn = pieceColor;
         }
         public Piece GetPiece(int row, int col)
         {
@@ -80,6 +88,26 @@ namespace Chess.Core
 
         public bool IsLegalMove(Move? move, bool showMessage)
         {
+            if (move == null)
+            {
+                if (showMessage)
+                {
+                    Console.WriteLine("Move cannot be null.");
+                }
+                return false;
+            }
+
+            if (move.From.Row < 0 || move.From.Row >= 8 ||
+                move.From.Col < 0 || move.From.Col >= 8 ||
+                move.To.Row < 0 || move.To.Row >= 8 ||
+                move.To.Col < 0 || move.To.Col >= 8)
+            {
+                if (showMessage)
+                {
+                    Console.WriteLine("Move must stay on the board.");
+                }
+                return false;
+            }
 
             Piece piece = GetPiece(move.From.Row, move.From.Col);
             Piece capturedPiece = GetPiece(move.To.Row, move.To.Col);

@@ -20,8 +20,6 @@ namespace Chess.Console
                 coordinates = System.Console.ReadLine().Split(' ').Select(n => int.Parse(n)).ToArray();
                 Position to = new Position(coordinates[0], coordinates[1]);
 
-                
-
                 Piece piece = board.GetPiece(from.Row, from.Col);
                 PromotionPiece? promotion = null;
 
@@ -43,6 +41,7 @@ namespace Chess.Console
                     };
                     promotion = pieceChoice;    
                 }  
+                
                 while(pieceChoice == null);
                 }
                 
