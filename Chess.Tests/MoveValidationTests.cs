@@ -170,6 +170,5 @@ public class MoveValidationTests
 
         //assert
         Assert.False(board.IsLegalMove(null, showMessage: false));
-
     }
 }

@@ -229,7 +229,7 @@ namespace Chess.Core
         }
         public void MovePiece(Move move)
         {
-            if (IsLegalMove(move, true))
+            if (IsLegalMove(move, false))
             {
                 Piece piece = GetPiece(move.From.Row, move.From.Col);
                 pieces[move.From.Row, move.From.Col] = null;

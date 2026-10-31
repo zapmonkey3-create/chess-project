@@ -129,6 +129,6 @@ public class RookTests
         Assert.Equal(PieceColor.White, board.GetPiece(6,0).Color);
         Assert.IsType<Pawn>(board.GetPiece(5,0));
         Assert.Equal(PieceColor.Black, board.GetPiece(5,0).Color);
-        
     }
+
 }

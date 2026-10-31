@@ -59,6 +59,7 @@ namespace Chess.Core.Pieces
                     }
                 }
             }
+            
             else
             {
                 return false;
