@@ -85,6 +85,44 @@ namespace Chess.Core
                 currentTurn = PieceColor.White;
             }
         }
+        
+        private bool IsEnPassantMove(Piece piece, Move move)
+        {
+            if(piece is not Pawn)
+            {
+                return false;
+            }
+
+            int direction = piece.Color == PieceColor.White ? -1 : 1;
+            Piece adjacentPiece = GetPiece(move.From.Row, move.To.Col);
+
+            if(enPassantTarget == null)
+            {
+                return false;
+            }
+
+            if(move.To.Row != enPassantTarget.Row || move.To.Col != enPassantTarget.Col)
+            {
+                return false;
+            }
+
+            if(Math.Abs(enPassantTarget.Col - move.From.Col) != 1 || enPassantTarget.Row != move.From.Row + direction)
+            {
+                return false;
+            }
+
+            if(GetPiece(enPassantTarget.Row, enPassantTarget.Col) != null)
+            {
+                return false;
+            }
+
+            if(adjacentPiece is not Pawn || adjacentPiece.Color == piece.Color)
+            {
+                return false;
+            }
+
+            return true;
+        }
 
         public bool IsLegalMove(Move? move, bool showMessage)
         {
@@ -150,16 +188,34 @@ namespace Chess.Core
                 }
                 return false;
             }
+
             //en passant validity
-            int direction = piece.Color == PieceColor.White ? -1 : 1;
 
-            Piece adjacentPiece = GetPiece(move.From.Row, move.To.Col);
+            if (IsEnPassantMove(piece, move))
+            {
+            Piece enPassantCapturedPiece = GetPiece(move.From.Row, move.To.Col);
 
-          if (enPassantTarget != null && piece is Pawn && move.To.Row == enPassantTarget.Row && move.To.Col == enPassantTarget.Col && Math.Abs(enPassantTarget.Col - move.From.Col) == 1 &&
-             enPassantTarget.Row == move.From.Row + direction && GetPiece(enPassantTarget.Row, enPassantTarget.Col) == null && adjacentPiece is Pawn && adjacentPiece.Color != piece.Color)
-          {
+            //temporary move
+            pieces[move.From.Row, move.From.Col] = null;
+            pieces[move.To.Row, move.To.Col] = piece;
+            pieces[move.From.Row, move.To.Col] = null;
+
+            //check validity
+            bool leavesKingInCheckafterEnPassant = IsInCheck(piece.Color);
+
+            //undo temporary move
+            pieces[move.From.Row, move.From.Col] = piece;
+            pieces[move.To.Row, move.To.Col] = capturedPiece;
+            pieces[move.From.Row, move.To.Col] = enPassantCapturedPiece;
+
+            if(leavesKingInCheckafterEnPassant)
+            {
+                return false;
+            }
+            
             return true;
-          }
+            }
+
             //can the piece move there
             if (!piece.CanMove(move.From, move.To, this))
             {
@@ -321,15 +377,12 @@ namespace Chess.Core
                 }
 
                 //en passant
-                if(enPassantTarget != null)
+                if (IsEnPassantMove(piece,move))
                 {
-                 if(move.To.Row == enPassantTarget.Row && move.To.Col == enPassantTarget.Col)
-                  {
                     pieces[move.From.Row, move.To.Col] = null;
-                  }
-
-                    enPassantTarget = null;
                 }
+
+                enPassantTarget = null;
                
 
                 if (piece is Pawn && Math.Abs(move.From.Row - move.To.Row) == 2)
