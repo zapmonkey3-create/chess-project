@@ -10,6 +10,6 @@
             Color = color;
         }
 
-        public abstract bool CanMove(Position from, Position to, Board board);
+        internal abstract bool CanMove(Position from, Position to, Board board);
     }
 }

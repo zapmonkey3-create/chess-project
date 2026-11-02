@@ -13,7 +13,7 @@ namespace Chess.Core.Pieces
         {
 
         }
-        public override bool CanMove(Position from, Position to, Board board)
+        internal override bool CanMove(Position from, Position to, Board board)
         {
             Piece pawn = board.GetPiece(from.Row, from.Col);
             Piece target = board.GetPiece(to.Row, to.Col);
@@ -33,7 +33,7 @@ namespace Chess.Core.Pieces
             if (to.Row == from.Row + direction && Math.Abs(to.Col - from.Col) == 1 && target != null)
             {
                     return true;
-            }
+            }        
             return false;
         }
     }

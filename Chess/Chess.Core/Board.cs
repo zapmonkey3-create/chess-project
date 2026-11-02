@@ -6,7 +6,7 @@ namespace Chess.Core
 {
     public class Board
     {
-        private Piece[,] pieces = new Piece[8, 8];
+        private Piece?[,] pieces = new Piece[8, 8];
         public PieceColor currentTurn { get; private set; } = PieceColor.White;
 
         private bool whiteCanCastleKingside = true;
@@ -58,7 +58,7 @@ namespace Chess.Core
         {
             return pieces[row, col];
         }
-        private Piece GetCapturedPiece(Position position)
+        private Piece? GetCapturedPiece(Position position)
         {
             Piece piece = GetPiece(position.Row, position.Col);
             if (piece != null)
@@ -70,8 +70,7 @@ namespace Chess.Core
               
             }
 
-           piece = null;
-           return piece;
+           return null;
     
         }
         private void SwitchTurn()
@@ -228,12 +227,19 @@ namespace Chess.Core
             
             //promotion validity  
             bool reachesLastRank = piece is Pawn && (piece.Color == PieceColor.White ? move.To.Row == 0 : move.To.Row == 7);
+
+            if (move.Promotion.HasValue && move.Promotion != PromotionPiece.Queen && move.Promotion != PromotionPiece.Rook && move.Promotion != PromotionPiece.Bishop && move.Promotion != PromotionPiece.Knight)
+            {
+                return false; 
+            }
+
             if(reachesLastRank != move.Promotion.HasValue)
             {
                 if(showMessage)
                 {
                     Console.WriteLine("Choose a promotion piece only when a pawn reaches the last rank!");
                 }
+
                 return false;
             }
             
@@ -299,13 +305,13 @@ namespace Chess.Core
                     {
                         if (move.From.Col > move.To.Col)
                         {
-                           Piece rook = pieces[7 , 0];
+                           Piece? rook = pieces[7 , 0];
                            pieces[7, 0] = null;
                            pieces[7, 3] = rook;
                         }
                         else
                         {
-                           Piece rook = pieces[7 , 7];
+                           Piece? rook = pieces[7 , 7];
                            pieces[7, 7] = null;
                            pieces[7, 5] = rook;
                         }
@@ -315,13 +321,13 @@ namespace Chess.Core
                     {
                         if (move.From.Col > move.To.Col)
                         {
-                           Piece rook = pieces[0 , 0];
+                           Piece? rook = pieces[0 , 0];
                            pieces[0, 0] = null;
                            pieces[0, 3] = rook;
                         }
                         else
                         {
-                           Piece rook = pieces[0 , 7];
+                           Piece? rook = pieces[0 , 7];
                            pieces[0, 7] = null;
                            pieces[0, 5] = rook;
                         }
@@ -432,15 +438,9 @@ namespace Chess.Core
             return false;
         }
 
-        public bool IsCheckmate(PieceColor color)
+        private bool HasAnyLegalMove(PieceColor color)
         {
-            
-            if (!IsInCheck(color))
-            {
-                return false;
-            }
-
-            //check if there is a legal move, if yes == no checkmate
+            //loops for all position
             for (int row = 0; row < 8; row++)
             {
                 for (int col = 0; col < 8; col++)
@@ -448,14 +448,31 @@ namespace Chess.Core
                     Piece piece = GetPiece(row, col);
                     if (piece != null && piece.Color == color)
                     {
+                        //loops for all possible destinations
                         for (int destinationRow = 0; destinationRow < 8; destinationRow++)
                         {
                             for (int destinationCol = 0; destinationCol < 8; destinationCol++)
                             {
-                                Move move = new Move(new Position(row, col), new Position(destinationRow, destinationCol));
-                                if (IsLegalMove(move, false))
+                                //check if there is a legal promotion
+                                Position from = new Position(row,col);
+                                Position to = new Position(destinationRow, destinationCol);
+                                bool promotes = piece is Pawn && destinationRow == (color == PieceColor.White ? 0 : 7);
+
+                                if(promotes)
                                 {
-                                    return false;
+                                    foreach(PromotionPiece promotion in Enum.GetValues<PromotionPiece>())
+                                    {
+                                        if(IsLegalMove(new Move(from,to,promotion), false))
+                                        {
+                                            return true;
+                                        }
+                                    }
+                                }
+
+                                //check for legal moves
+                                if (IsLegalMove(new Move(from,to), false))
+                                {
+                                    return true;
                                 }
                             }
                         }
@@ -463,40 +480,27 @@ namespace Chess.Core
                 }
             }
              
-            return true;
+            return false;
         }
+
+        public bool IsCheckmate(PieceColor color)
+        {
+            
+            if (IsInCheck(color) && !HasAnyLegalMove(color))
+            {
+                return true;
+            }
+            return false;
+        }
+
 
         public bool IsStalemate(PieceColor color)
         {
-            if (IsInCheck(color))
+            if (!IsInCheck(color) && !HasAnyLegalMove(color))
             {
-                return false;
+                return true;
             }
-
-            for (int row = 0; row < 8; row++)
-            {
-                for (int col = 0; col < 8; col++)
-                {
-                    Piece piece = GetPiece(row, col);
-                    if (piece != null && piece.Color == color)
-                    {
-                        for (int destinationRow = 0; destinationRow < 8; destinationRow++)
-                        {
-                            for (int destinationCol = 0; destinationCol < 8; destinationCol++)
-                            {
-                                Move move = new Move(new Position(row, col), new Position(destinationRow, destinationCol));
-                                if (IsLegalMove(move, false))
-                                {
-                                    
-                                    return false;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            return true;
+            return false;
         }
     }
 }

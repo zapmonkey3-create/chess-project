@@ -318,4 +318,5 @@ public class SpecialMoves
         Assert.Equal(PieceColor.White, board.GetPiece(3,4).Color);
         Assert.Null(board.GetPiece(2,5));
     }
+
 }

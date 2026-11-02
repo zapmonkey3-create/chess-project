@@ -278,4 +278,24 @@ public class PawnTests
         Assert.IsType<Pawn>(board.GetPiece(2,1));
         Assert.Null(board.GetPiece(1,1));
     }
+
+    [Fact]
+    public void Pawn_PromotionPieceCannotBeInvalid()
+    {
+        //arrange
+        Piece[,] pieces = new Piece[8,8];
+        pieces[7,4] = new King(PieceColor.White);
+        pieces[0,4] = new King(PieceColor.Black);
+        pieces[1,1] = new Pawn(PieceColor.White);
+        Move move = new Move(new Position(1,1), new Position(0,1), (PromotionPiece)999);
+        Board board = new Board(pieces, PieceColor.White);
+
+        //act
+        board.MovePiece(move);
+
+        //assert
+        Assert.Null(board.GetPiece(0,1));
+        Assert.IsType<Pawn>(board.GetPiece(1,1));
+        Assert.Equal(PieceColor.White,board.currentTurn);
+    }
 }

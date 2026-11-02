@@ -11,7 +11,7 @@ namespace Chess.Core.Pieces
         public Bishop(PieceColor color): base(color)
         {
         }
-        public override bool CanMove(Position from, Position to, Board board)
+        internal override bool CanMove(Position from, Position to, Board board)
         {
             int rowDifference = Math.Abs(from.Row - to.Row);
             int colDifference = Math.Abs(from.Col - to.Col);

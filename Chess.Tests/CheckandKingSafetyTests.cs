@@ -136,4 +136,88 @@ public class CheckandKingSafetyTests()
         //assert
         Assert.True(board.IsInCheck(PieceColor.White));
     }
+
+    [Fact]
+
+    public void IsLegalMove_RejectsMoveThatExposesOwnKing()
+    {
+        //arrange
+        Piece[,] pieces = new Piece[8,8];
+        pieces[0,4] = new King(PieceColor.Black);
+        pieces[1,4] = new Rook(PieceColor.Black);
+        pieces[6,4] = new Rook(PieceColor.White);
+        pieces[7,4] = new King(PieceColor.White);
+        Board board = new Board(pieces, PieceColor.White);
+        Move move = new Move(new Position(6,4), new Position(6,3));
+
+        //assert
+        Assert.False(board.IsLegalMove(move, false));
+    }
+
+    [Fact]
+
+    public void IsLegalMove_AllowsKingToEscapeCheck()
+    {
+         //arrange
+        Piece[,] pieces = new Piece[8,8];
+        pieces[0,4] = new King(PieceColor.Black);
+        pieces[6,4] = new Rook(PieceColor.White);
+        pieces[7,4] = new King(PieceColor.White);
+        Board board = new Board(pieces, PieceColor.Black);
+        Move move = new Move(new Position(0,4), new Position(0,3));
+
+        //assert
+        Assert.True(board.IsLegalMove(move, false));
+    }
+
+    [Fact]
+
+    public void IsLegalMove_AllowsCapturingCheckingPiece()
+    {
+           //arrange
+        Piece[,] pieces = new Piece[8,8];
+        pieces[0,4] = new King(PieceColor.Black);
+        pieces[1,4] = new Rook(PieceColor.Black);
+        pieces[1,0] = new Rook(PieceColor.White);
+        pieces[7,4] = new King(PieceColor.White);
+        Board board = new Board(pieces, PieceColor.White);
+        Move move = new Move(new Position(1,0), new Position(1,4));
+
+        //assert
+        Assert.True(board.IsLegalMove(move, false));
+    }
+
+    [Fact]
+
+    public void IsLegalMove_AllowsBlockingCheck()
+    {
+            //arrange
+        Piece[,] pieces = new Piece[8,8];
+        pieces[0,4] = new King(PieceColor.Black);
+        pieces[1,4] = new Rook(PieceColor.Black);
+        pieces[2,0] = new Rook(PieceColor.White);
+        pieces[7,4] = new King(PieceColor.White);
+        Board board = new Board(pieces, PieceColor.White);
+        Move move = new Move(new Position(2,0), new Position(2,4));
+
+        //assert
+        Assert.True(board.IsLegalMove(move, false));
+    }
+
+    [Fact]
+
+    public void IsLegalMove_RejectsMoveThatLeavesKingInCheck()
+    {
+        //arrange
+        Piece[,] pieces = new Piece[8,8];
+        pieces[0,4] = new King(PieceColor.Black);
+        pieces[1,4] = new Rook(PieceColor.Black);
+        pieces[7,4] = new King(PieceColor.White);
+        Board board = new Board(pieces, PieceColor.White);
+        Move move = new Move(new Position(7,4), new Position(6,4));
+
+        //assert
+        Assert.False(board.IsLegalMove(move, false));
+    }
+
 }

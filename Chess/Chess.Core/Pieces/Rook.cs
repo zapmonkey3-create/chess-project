@@ -15,7 +15,7 @@ namespace Chess.Core.Pieces
 
         }
 
-        public override bool CanMove(Position from, Position to, Board board)
+        internal override bool CanMove(Position from, Position to, Board board)
         {
             //vertical
             if (from.Col == to.Col)
