@@ -22,7 +22,7 @@ namespace Chess.Console
 
                 Piece piece = board.GetPiece(from.Row, from.Col);
                 PromotionPiece? promotion = null;
-
+                System.Console.WriteLine(new GameExporter().ExportFen(board));
                 bool needsPromotion = piece is Pawn && (piece.Color == PieceColor.White && to.Row == 0 || piece.Color == PieceColor.Black && to.Row == 7);
                 if(needsPromotion)
                 {

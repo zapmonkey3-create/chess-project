@@ -84,5 +84,10 @@ namespace Chess.Core
 
              return false;
         }
+
+        private bool DrawByThreefoldRepetition(Piece[,] pieces)
+        {
+            return true;
+        }
     }
 }
