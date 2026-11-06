@@ -26,57 +26,72 @@ namespace Chess.Core
         }
        public string ExportFen(Board board)
         {   
-            StringBuilder positionKey = new StringBuilder("");
-            int nullSquareTracker = 0;
+            StringBuilder fen = new StringBuilder("");
             for(int row = 0; row < 8; row++)
             {
+                int nullSquareTracker = 0;
                 for(int col = 0; col < 8; col++)
                 {
-                    if(board.GetPiece(row,col) == null)
-                    {
-                        nullSquareTracker++;
-                    }
+                      Piece? piece = board.GetPiece(row, col);
 
-                    if(board.GetPiece(row,col) != null)
-                    {
-                       positionKey.Append(GetPieceSymbol(board.GetPiece(row,col)));
-                    }
-
-                    if((col + 1) < 8 && board.GetPiece(row,col+1) != null && nullSquareTracker != 0)
-                    {
-                       positionKey.Append(nullSquareTracker.ToString());
-                       nullSquareTracker = 0;
-                    }
-                    
-                    if(nullSquareTracker == 8)
-                    {
-                        positionKey.Append(nullSquareTracker.ToString());
-                        nullSquareTracker = 0;
-                    }
+                      if (piece == null)
+                      {
+                      nullSquareTracker++;
+                      }
+                      else
+                      {
+                      if (nullSquareTracker > 0)
+                      {
+                      fen.Append(nullSquareTracker);
+                      nullSquareTracker = 0;
+                      }
+                      
+                      fen.Append(GetPieceSymbol(piece));
+                      }
                 }
-                if(row < 7)
-                positionKey.Append('/');
+
+                if (nullSquareTracker > 0)
+                fen.Append(nullSquareTracker);
+
+                if (row < 7)
+                fen.Append('/');
             }
 
             if(board.currentTurn == PieceColor.White)
-            positionKey.Append(" w ");
+            fen.Append(" w ");
 
             else
-            positionKey.Append(" b ");
+            fen.Append(" b ");
             
             if(board.WhiteCanCastleKingside)
-            positionKey.Append("K");
+            fen.Append("K");
 
             if(board.WhiteCanCastleQueenside)
-            positionKey.Append("Q");
+            fen.Append("Q");
 
             if(board.BlackCanCastleKingside)
-            positionKey.Append("k");
+            fen.Append("k");
 
             if(board.BlackCanCastleQueenside)
-            positionKey.Append("q");
+            fen.Append("q");
 
-            return positionKey.ToString();
+            if(!board.WhiteCanCastleKingside && !board.WhiteCanCastleQueenside && !board.BlackCanCastleKingside && !board.BlackCanCastleQueenside)
+            fen.Append("-");
+            
+            fen.Append(' ');
+            if(board.EnPassantTarget is Position target)
+            {
+                fen.Append((char)('a' + target.Col));
+                fen.Append(8-target.Row);
+            }
+            else
+            {
+                fen.Append(" -");
+            }
+
+            fen.Append($" {board.HalfMoveClock} {board.MoveClock}");
+
+            return fen.ToString();
         }
     }
 }

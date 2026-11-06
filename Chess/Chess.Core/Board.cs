@@ -14,11 +14,16 @@ namespace Chess.Core
         private bool blackCanCastleKingside = true;
         private bool blackCanCastleQueenside = true;
         private Position? enPassantTarget;
+        private int halfMoveClock = 0;
+        private int moveClock = 1;
+        private List<string> fenHistory = new List<string>();
         public bool WhiteCanCastleKingside => whiteCanCastleKingside;
         public bool WhiteCanCastleQueenside => whiteCanCastleQueenside;
         public bool BlackCanCastleKingside => blackCanCastleKingside;
         public bool BlackCanCastleQueenside => blackCanCastleQueenside;
         public Position? EnPassantTarget => enPassantTarget;
+        public int HalfMoveClock => halfMoveClock;
+        public int MoveClock => moveClock;
         private void SetupBackRank(int row, PieceColor color)
         {
             pieces[row, 0] = new Rook(color);
@@ -45,7 +50,7 @@ namespace Chess.Core
             SetupPawns(1, PieceColor.Black);
             SetupPawns(6, PieceColor.White);
             SetupBackRank(7, PieceColor.White);
-
+            fenHistory.Add(new GameExporter().ExportFen(this));
         }
 
         public Board(Piece[,] Pieces, PieceColor pieceColor)
@@ -53,6 +58,7 @@ namespace Chess.Core
         {
             pieces = Pieces;
             currentTurn = pieceColor;
+            fenHistory.Add(new GameExporter().ExportFen(this));
         }
         public Piece GetPiece(int row, int col)
         {
@@ -294,6 +300,23 @@ namespace Chess.Core
             if (IsLegalMove(move, false))
             {
                 Piece piece = GetPiece(move.From.Row, move.From.Col);
+
+                
+                if(piece.Color == PieceColor.Black)
+                {
+                    moveClock++;
+                }
+
+                if(piece is Pawn || GetPiece(move.To.Row, move.To.Col) != null || IsEnPassantMove(piece, move))
+                {
+                    halfMoveClock = 0;
+                }
+
+                else
+                {
+                    halfMoveClock++;
+                }
+                
                 pieces[move.From.Row, move.From.Col] = null;
                 pieces[move.To.Row, move.To.Col] = piece;
                 int colDifference = Math.Abs(move.From.Col - move.To.Col);
@@ -396,8 +419,8 @@ namespace Chess.Core
                 int targetRow = (move.From.Row + move.To.Row) / 2;
                 enPassantTarget = new Position(targetRow, move.From.Col);
                 }
-                
                 SwitchTurn();
+                fenHistory.Add(new GameExporter().ExportFen(this));
             }    
         }
         public Position FindKing(PieceColor color)
